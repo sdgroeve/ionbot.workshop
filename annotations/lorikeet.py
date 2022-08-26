@@ -111,11 +111,11 @@ def get_varmods(peptide, modifications):
         mods.append("{index: %i, modMass: %s, aminoAcid: '%s'}"%(mod_pos,tmp[i+1],peptide[mod_pos-1]))
     return mods
 
-def generate_html(annotations_folder,mgf_folder,mgf_file,scan,df):
+def generate_html(annotations_folder,mgf_folder,mgf_file,scan,df,l_os="windows"):
     tmp = df[(df["spectrum_file"]==mgf_file)&(df["scan"]==scan)]
     sequence = tmp["matched_peptide"].values[0]
     modifications = tmp["modifications_delta"].values[0]
-    spectrum, charge, parent_mz = get_spectrum(mgf_folder+mgf_file, scan)
+    spectrum, charge, parent_mz = get_spectrum(mgf_folder+mgf_file, scan,l_os)
     if spectrum == "]":
         print("spectrum not found")
 
