@@ -95,7 +95,6 @@ def get_spectrum(mgf, scan, l_os = "windows"):
                 if not "=" in c:
                     tmp = c.split(" ")
                     spectrum += "[%s,%s],"%(tmp[0],tmp[1])
-                line+=1
         spectrum = spectrum[:-1]
         spectrum += "]"
         return spectrum, charge, parent_mz
