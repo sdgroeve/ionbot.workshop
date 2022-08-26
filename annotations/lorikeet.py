@@ -80,7 +80,7 @@ def get_spectrum(mgf, scan, l_os = "windows"):
         return spectrum, charge, parent_mz
 
     if l_os == "linux":
-        os.system('grep -A 2000 "SCANS=%i %s > tmpout'%(scan,mgf))
+        os.system('grep -A 2000 "SCANS=%i" %s > tmpout'%(scan,mgf))
         spectrum = "["
         with open("tmpout") as f:
             for c in f:
