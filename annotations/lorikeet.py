@@ -54,29 +54,51 @@ $(document).ready(function () {
 # As spectrum files can be quite large, I use findstr to read the lines first
 # This only really speeds up things if the next query is on the same MGF file
 # TODO: We should think about how to optimize this for ionbot.cloud
-def get_spectrum(mgf, scan):
-    line = subprocess.check_output(['findstr', '/N', "SCANS=%i"%scan, mgf])
+def get_spectrum(mgf, scan, l_os = "windows"):
+    if l_os == "windows":
+        line = subprocess.check_output(['findstr', '/N', "SCANS=%i"%scan, mgf])
 
-    line = int(line.decode("utf-8").split(":")[0])
-    spectrum = "["
-    while True:
-        c = linecache.getline(mgf, line)
-        c = c.rstrip()
-        if c == "": 
+        line = int(line.decode("utf-8").split(":")[0])
+        spectrum = "["
+        while True:
+            c = linecache.getline(mgf, line)
+            c = c.rstrip()
+            if c == "": 
+                line+=1
+                continue
+            if "END IONS" in c: break
+            if "PEPMASS=" in c:
+                parent_mz = c[8:]
+            if "CHARGE" in c:
+                charge = c[7:9].replace("+","")
+            if not "=" in c:
+                tmp = c.split(" ")
+                spectrum += "[%s,%s],"%(tmp[0],tmp[1])
             line+=1
-            continue
-        if "END IONS" in c: break
-        if "PEPMASS=" in c:
-            parent_mz = c[8:]
-        if "CHARGE" in c:
-            charge = c[7:9].replace("+","")
-        if not "=" in c:
-            tmp = c.split(" ")
-            spectrum += "[%s,%s],"%(tmp[0],tmp[1])
-        line+=1
-    spectrum = spectrum[:-1]
-    spectrum += "]"
-    return spectrum, charge, parent_mz
+        spectrum = spectrum[:-1]
+        spectrum += "]"
+        return spectrum, charge, parent_mz
+
+    if l_os == "linux":
+        os.system('grep -A 2000 "SCANS=%i %s > tmpout'%(scan,mgf))
+        spectrum = "["
+        with open("tmpout") as f:
+            for c in f:
+                c = c.rstrip()
+                if c == "": 
+                    continue
+                if "END IONS" in c: break
+                if "PEPMASS=" in c:
+                    parent_mz = c[8:]
+                if "CHARGE" in c:
+                    charge = c[7:9].replace("+","")
+                if not "=" in c:
+                    tmp = c.split(" ")
+                    spectrum += "[%s,%s],"%(tmp[0],tmp[1])
+                line+=1
+        spectrum = spectrum[:-1]
+        spectrum += "]"
+        return spectrum, charge, parent_mz
 
 # Here the "matched_peptide" and "modifications" columns
 # in the ionbot result file are passed to create the data
