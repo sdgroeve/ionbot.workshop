@@ -4,8 +4,8 @@ dependencies:
   - pip
   - pip:
     - numpy
-	- matplotlib
-	- plotly
-	- itables
-	- pandas
-	- seaborn
+    - matplotlib
+    - plotly
+    - itables
+    - pandas
+    - seaborn
