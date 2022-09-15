@@ -1,0 +1,11 @@
+name: ionbot
+dependencies:
+  - python=3.9
+  - pip
+  - pip:
+    - numpy
+	- matplotlib
+	- plotly
+	- itables
+	- pandas
+	- seaborn
