@@ -9,3 +9,4 @@ dependencies:
     - itables
     - pandas
     - seaborn
+    - scikit-learn
